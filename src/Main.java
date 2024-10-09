@@ -1,22 +1,29 @@
 import java.util.List;
 
 void main(){
-        var lista = new ListaEncadeada<>(List.of("AB","BC"));
-        lista.adicionarNode("AC");
-
+        var lista = new ListaEncadeada(new String[]{"AB","BC","AC"});
         lista.printNodes();
-
-        System.out.println("---------");
 
         lista.remover("BC");
         lista.printNodes();
 
+        lista.remover("AB");
+        lista.printNodes();
+        lista.remover("AC");
+        lista.printNodes();
+        lista.adicionarNodes(new String[]{"PC","PV","PB"});
+        lista.printNodes();
+        lista.remover("PV");
+        lista.printNodes();
+        lista.remover("PC");
+        lista.printNodes();
+
 }
 
-class ListaEncadeada<String>{
-    Node primeiro = null;
-    Node ultimo = null;
-    int tamanho;
+class ListaEncadeada{
+    private Node primeiro = null;
+    private Node ultimo = null;
+    private int tamanho;
 
     public ListaEncadeada(){}
 
@@ -29,6 +36,12 @@ class ListaEncadeada<String>{
     public ListaEncadeada(List<String> nodes) {
         for(int i = 0; i < nodes.size(); i++){
             adicionarNode(nodes.get(i));
+        }
+    }
+
+    public void adicionarNodes(String[] nodes){
+        for (String node : nodes) {
+            adicionarNode(node);
         }
     }
 
@@ -45,8 +58,6 @@ class ListaEncadeada<String>{
        tamanho ++;
     }
 
-               //AB,           BC,           AC
-               //anterior         //atual
     public void remover(String procurado){
         Node anterior = null;
         var atual = primeiro;
@@ -54,8 +65,29 @@ class ListaEncadeada<String>{
         for(int i = 0; i < tamanho; i ++){
             //removendo o valor do meio
             if(atual.valor == procurado){
-                anterior.proximo = atual.proximo;
+                if(tamanho == 1){
+                    /*
+                    Como a lista possui só um valor, então o primeiro e o ultimo vão ser nulos
+                     */
+                    primeiro = null;
+                    ultimo = null;
+                }
+                //é o primeiro
+                else if(atual.valor.equals(primeiro.valor)){
+                    primeiro = atual.proximo;
+                }
+
+                //é o ultimo
+                else if (atual.valor.equals(ultimo.valor)){
+                    ultimo = anterior;
+                }
+                //está dentro da lista
+                else{
+                    anterior.proximo = atual.proximo;
+                }
+
                 tamanho --;
+                System.out.println("\t > Removeu " + procurado);
                 break;
             }
             anterior = atual;
@@ -65,6 +97,8 @@ class ListaEncadeada<String>{
 
     public void printNodes(){
         var atual = primeiro;
+
+        System.out.println("********* Nodes ********");
         for(int i = 0; i < tamanho; i ++){
             System.out.println(atual.valor);
             if(atual.proximo != null){
@@ -74,7 +108,7 @@ class ListaEncadeada<String>{
     }
 }
 
-class Node<String>{
+class Node{
     String valor;
     Node proximo = null;
 
